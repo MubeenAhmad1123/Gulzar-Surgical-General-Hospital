@@ -5,7 +5,6 @@ import About from "./pages/About";
 import Services from "./pages/Services";
 import PatientInfo from "./pages/PatientInfo";
 import FAQ from "./pages/FAQ";
-import Contact from "./pages/Contact";
 import OurTeam from "./pages/Doctors";
 import Gallery from "./pages/Gallery";
 import BookAppointment from "./pages/BookAppointment";
@@ -21,7 +20,7 @@ export default function App() {
         <Route path="/services" element={<Services />} />
         <Route path="/patient-info" element={<PatientInfo />} />
         <Route path="/faq" element={<FAQ />} />
-        <Route path="/contact" element={<Contact />} />
+       
         <Route path="/our-team" element={<OurTeam />} />
         <Route path="/gallery" element={<Gallery />} />
         <Route path="/book-appointment" element={<BookAppointment />} />
