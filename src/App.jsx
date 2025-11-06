@@ -12,7 +12,7 @@ import BookAppointment from "./pages/BookAppointment";
 
 export default function App() {
   return (
-    <div className="bg-red-500">
+
     <Router>
       <Navbar />
       <Routes>
@@ -27,6 +27,6 @@ export default function App() {
         <Route path="/book-appointment" element={<BookAppointment />} />
       </Routes>
     </Router>
-    </div>
+ 
   );
 }
