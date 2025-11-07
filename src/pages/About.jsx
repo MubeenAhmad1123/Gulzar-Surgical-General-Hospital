@@ -4,13 +4,15 @@ import { Sparkles, Heart, Award, Users, Clock, Shield, Zap, Target } from 'lucid
 const About = () => {
   const [visibleSections, setVisibleSections] = useState(new Set());
   const [activeValue, setActiveValue] = useState(0);
+  const [animatedNumbers, setAnimatedNumbers] = useState({});
   const observerRef = useRef(null);
+  const numbersAnimated = useRef(false);
 
   const stats = [
-    { number: "15+", label: "Years Experience", icon: Award },
-    { number: "24/7", label: "Emergency Care", icon: Clock },
-    { number: "1000+", label: "Happy Clients", icon: Users },
-    { number: "100%", label: "Safe Procedures", icon: Shield }
+    { number: 15, suffix: "+", label: "Years Experience", icon: Award },
+    { number: 24, suffix: "/7", label: "Emergency Care", icon: Clock },
+    { number: 1000, suffix: "+", label: "Happy Clients", icon: Users },
+    { number: 100, suffix: "%", label: "Safe Procedures", icon: Shield }
   ];
 
   const values = [
@@ -34,12 +36,41 @@ const About = () => {
     }
   ];
 
+  const animateNumbers = () => {
+    stats.forEach((stat, index) => {
+      const duration = 2000;
+      const steps = 60;
+      const stepValue = stat.number / steps;
+      let currentStep = 0;
+
+      const interval = setInterval(() => {
+        currentStep++;
+        const currentValue = Math.min(Math.floor(stepValue * currentStep), stat.number);
+        
+        setAnimatedNumbers((prev) => ({
+          ...prev,
+          [index]: currentValue
+        }));
+
+        if (currentStep >= steps) {
+          clearInterval(interval);
+        }
+      }, duration / steps);
+    });
+  };
+
   useEffect(() => {
     observerRef.current = new IntersectionObserver(
       (entries) => {
         entries.forEach((entry) => {
           if (entry.isIntersecting) {
             setVisibleSections((prev) => new Set([...prev, entry.target.dataset.section]));
+            
+            // Trigger number animation when stats section becomes visible
+            if (entry.target.dataset.section === 'stats' && !numbersAnimated.current) {
+              numbersAnimated.current = true;
+              animateNumbers();
+            }
           }
         });
       },
@@ -52,6 +83,9 @@ const About = () => {
     const valueInterval = setInterval(() => {
       setActiveValue((prev) => (prev + 1) % values.length);
     }, 4000);
+
+    // Smooth scroll behavior
+    document.documentElement.style.scrollBehavior = 'smooth';
 
     return () => {
       if (observerRef.current) observerRef.current.disconnect();
@@ -94,7 +128,7 @@ const About = () => {
         </div>
       </div>
 
-      {/* Stats Section with Stagger Animation */}
+      {/* Stats Section with Counting Animation */}
       <div 
         data-section="stats"
         className={`animate-section max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 -mt-8 mb-20 transition-all duration-1000 ${
@@ -104,18 +138,19 @@ const About = () => {
         <div className="grid grid-cols-2 md:grid-cols-4 gap-6">
           {stats.map((stat, index) => {
             const Icon = stat.icon;
+            const displayNumber = animatedNumbers[index] ?? 0;
             return (
               <div 
                 key={index} 
-                className="bg-white rounded-2xl p-8 shadow-xl border border-emerald-100/50 hover:shadow-2xl hover:-translate-y-2 transition-all duration-500 group"
+                className="bg-white rounded-2xl p-8 shadow-xl border border-emerald-100/50 hover:shadow-2xl hover:-translate-y-2 transition-all duration-500 group animate-scale-in"
                 style={{ animationDelay: `${index * 150}ms` }}
               >
                 <div className="flex flex-col items-center text-center">
-                  <div className="bg-gradient-to-br from-emerald-100 to-teal-100 p-4 rounded-xl mb-4 group-hover:scale-110 transition-transform duration-300">
+                  <div className="bg-gradient-to-br from-emerald-100 to-teal-100 p-4 rounded-xl mb-4 group-hover:scale-110 group-hover:rotate-12 transition-all duration-300">
                     <Icon className="w-7 h-7 text-emerald-600" />
                   </div>
-                  <div className="text-4xl font-bold text-slate-800 mb-2 group-hover:text-emerald-600 transition-colors">
-                    {stat.number}
+                  <div className="text-4xl font-bold text-slate-800 mb-2 group-hover:text-emerald-600 transition-colors tabular-nums">
+                    {displayNumber}{stat.suffix}
                   </div>
                   <div className="text-sm font-medium text-slate-600">{stat.label}</div>
                 </div>
@@ -138,7 +173,7 @@ const About = () => {
             <div className="md:col-span-2 relative">
               <div className="absolute inset-0 bg-gradient-to-br from-emerald-600/90 to-teal-600/90 z-10"></div>
               <div className="absolute inset-0 z-20 flex flex-col justify-center items-center text-white p-8">
-                <div className="bg-white/10 backdrop-blur-md rounded-2xl p-8 border border-white/20">
+                <div className="bg-white/10 backdrop-blur-md rounded-2xl p-8 border border-white/20 hover:scale-105 transition-transform duration-500">
                   <Sparkles className="w-16 h-16 mx-auto mb-4 animate-pulse" />
                   <h3 className="text-2xl font-bold mb-2">Dr. Sumaira Gulzar</h3>
                   <p className="text-emerald-100 font-medium mb-3">Medical Director & Lead Clinician</p>
@@ -203,7 +238,7 @@ const About = () => {
           ].map((item, index) => (
             <div 
               key={index}
-              className="group relative aspect-[4/3] rounded-2xl overflow-hidden shadow-xl hover:shadow-2xl transition-all duration-500"
+              className="group relative aspect-[4/3] rounded-2xl overflow-hidden shadow-xl hover:shadow-2xl transition-all duration-500 animate-scale-in"
               style={{ animationDelay: `${index * 200}ms` }}
             >
               {/* Image Placeholder */}
@@ -242,9 +277,10 @@ const About = () => {
               <div 
                 key={index}
                 onClick={() => setActiveValue(index)}
-                className={`cursor-pointer bg-gradient-to-br ${value.gradient} p-8 rounded-2xl shadow-lg hover:shadow-2xl transition-all duration-500 hover:-translate-y-2 border-2 ${
+                className={`cursor-pointer bg-gradient-to-br ${value.gradient} p-8 rounded-2xl shadow-lg hover:shadow-2xl transition-all duration-500 hover:-translate-y-2 border-2 animate-scale-in ${
                   activeValue === index ? 'border-emerald-500 scale-105' : 'border-emerald-100/50'
                 }`}
+                style={{ animationDelay: `${index * 150}ms` }}
               >
                 <div className={`bg-white/80 backdrop-blur-sm w-14 h-14 rounded-xl flex items-center justify-center mb-4 transition-transform duration-500 ${
                   activeValue === index ? 'scale-110 rotate-12' : ''
@@ -353,6 +389,38 @@ const About = () => {
         }
         .animate-fade-in {
           animation: fade-in 1s ease-out forwards;
+        }
+        @keyframes scale-in {
+          from {
+            opacity: 0;
+            transform: scale(0.8);
+          }
+          to {
+            opacity: 1;
+            transform: scale(1);
+          }
+        }
+        .animate-scale-in {
+          animation: scale-in 0.6s cubic-bezier(0.34, 1.56, 0.64, 1) forwards;
+          opacity: 0;
+        }
+        
+        /* Smooth scroll with easing */
+        html {
+          scroll-behavior: smooth;
+        }
+        
+        @media (prefers-reduced-motion: reduce) {
+          html {
+            scroll-behavior: auto;
+          }
+          .animate-scale-in,
+          .animate-slide-up,
+          .animate-fade-in {
+            animation: none;
+            opacity: 1;
+            transform: none;
+          }
         }
       `}</style>
     </div>
