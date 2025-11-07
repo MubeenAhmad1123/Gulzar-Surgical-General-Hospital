@@ -8,6 +8,7 @@ import FAQ from "./pages/FAQ";
 import OurTeam from "./pages/Doctors";
 import Gallery from "./pages/Gallery";
 import BookAppointment from "./pages/BookAppointment";
+import Footer from "./components/Footer.jsx";
 
 export default function App() {
   return (
@@ -23,6 +24,7 @@ export default function App() {
         <Route path="/gallery" element={<Gallery />} />
         <Route path="/book-appointment" element={<BookAppointment />} />
       </Routes>
+      <Footer />
     </Router>
   );
 }
