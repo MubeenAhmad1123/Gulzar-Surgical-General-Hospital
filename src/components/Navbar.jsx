@@ -28,7 +28,7 @@ const Navbar = () => {
     { name: 'Services', path: '/services' },
     { name: 'Patient Info', path: '/patient-info' },
     { name: 'FAQ', path: '/faq' },
-    { name: 'Contact', path: '/contact' },
+   
     { name: 'Our Team', path: '/our-team' },
     { name: 'Gallery', path: '/gallery' },
   ];
