@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import { NavLink } from 'react-router-dom';
-import { Menu, X, Sparkles } from 'lucide-react';
+import { Menu, X, ChevronDown } from 'lucide-react';
 
 const Navbar = () => {
   const [isOpen, setIsOpen] = useState(false);
@@ -22,25 +22,31 @@ const Navbar = () => {
     }
   }, [isOpen]);
 
-  const navItems = [
+  const mainNavItems = [
     { name: 'Home', path: '/' },
     { name: 'About', path: '/about' },
     { name: 'Services', path: '/services' },
+    { name: 'Our Team', path: '/our-team' },
+  ];
+
+  const dropdownItems = [
     { name: 'Patient Info', path: '/patient-info' },
     { name: 'FAQ', path: '/faq' },
-   
-    { name: 'Our Team', path: '/our-team' },
     { name: 'Gallery', path: '/gallery' },
   ];
 
   return (
     <>
       <style>{`
-        @import url('https://fonts.googleapis.com/css2?family=Playfair+Display:wght@400;500;600;700&family=Inter:wght@300;400;500;600&display=swap');
+        @import url('https://fonts.googleapis.com/css2?family=Poppins:wght@400;500;600;700&display=swap');
         
         * {
           -webkit-font-smoothing: antialiased;
           -moz-osx-font-smoothing: grayscale;
+        }
+        
+        .navbar-font {
+          font-family: 'Poppins', sans-serif;
         }
         
         .nav-link-desktop {
@@ -56,9 +62,9 @@ const Navbar = () => {
           left: 50%;
           transform: translateX(-50%);
           width: 0;
-          height: 2px;
-          background: linear-gradient(90deg, transparent, #C9A496, transparent);
-          box-shadow: 0 0 12px rgba(201, 164, 150, 0.6);
+          height: 2.5px;
+          background: linear-gradient(90deg, transparent, #10b981, transparent);
+          box-shadow: 0 0 12px rgba(16, 185, 129, 0.5);
           transition: width 0.4s cubic-bezier(0.4, 0, 0.2, 1);
         }
         
@@ -68,7 +74,48 @@ const Navbar = () => {
         }
         
         .nav-link-desktop.active {
-          color: #C9A496;
+          color: #10b981;
+        }
+        
+        .dropdown-container {
+          position: relative;
+        }
+        
+        .dropdown-menu {
+          position: absolute;
+          top: 100%;
+          right: 0;
+          margin-top: 0.5rem;
+          background: white;
+          border-radius: 1rem;
+          box-shadow: 0 10px 40px rgba(16, 185, 129, 0.15);
+          border: 1px solid rgba(16, 185, 129, 0.1);
+          opacity: 0;
+          transform: translateY(-10px);
+          pointer-events: none;
+          transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+          min-width: 180px;
+          overflow: hidden;
+        }
+        
+        .dropdown-container:hover .dropdown-menu {
+          opacity: 1;
+          transform: translateY(0);
+          pointer-events: all;
+        }
+        
+        .dropdown-item {
+          display: block;
+          padding: 0.75rem 1.25rem;
+          color: #1f2937;
+          transition: all 0.2s ease;
+          border-left: 3px solid transparent;
+        }
+        
+        .dropdown-item:hover {
+          background: linear-gradient(90deg, rgba(16, 185, 129, 0.1), transparent);
+          border-left-color: #10b981;
+          color: #10b981;
         }
         
         .mobile-nav-item {
@@ -83,10 +130,10 @@ const Navbar = () => {
           top: 0;
           height: 100%;
           width: 4px;
-          background: linear-gradient(180deg, #C9A496, #F8E7EC);
+          background: linear-gradient(180deg, #10b981, #34d399);
           transform: translateX(-100%);
           transition: transform 0.4s cubic-bezier(0.4, 0, 0.2, 1);
-          box-shadow: 0 0 10px rgba(201, 164, 150, 0.5);
+          box-shadow: 0 0 10px rgba(16, 185, 129, 0.5);
         }
         
         .mobile-nav-item:hover::before,
@@ -94,38 +141,21 @@ const Navbar = () => {
           transform: translateX(0);
         }
         
-        .logo-container {
-          font-family: 'Playfair Display', serif;
-          letter-spacing: 0.5px;
-        }
-        
-        .logo-gradient {
-          background: linear-gradient(135deg, #C9A496 0%, #A5C3B1 100%);
-          -webkit-background-clip: text;
-          -webkit-text-fill-color: transparent;
-          background-clip: text;
-        }
-        
-        .nav-text {
-          font-family: 'Inter', sans-serif;
-          letter-spacing: 0.3px;
-        }
-        
         .glass-effect {
-          background: rgba(255, 250, 249, 0.85);
+          background: rgba(255, 255, 255, 0.9);
           backdrop-filter: blur(20px) saturate(180%);
           -webkit-backdrop-filter: blur(20px) saturate(180%);
         }
         
         .glass-effect-dark {
-          background: rgba(255, 250, 249, 0.95);
+          background: rgba(255, 255, 255, 0.95);
           backdrop-filter: blur(20px) saturate(180%);
           -webkit-backdrop-filter: blur(20px) saturate(180%);
         }
         
         .cta-btn {
-          background: linear-gradient(135deg, #C9A496 0%, #F8E7EC 100%);
-          box-shadow: 0 4px 15px rgba(201, 164, 150, 0.25);
+          background: linear-gradient(135deg, #10b981 0%, #059669 100%);
+          box-shadow: 0 4px 15px rgba(16, 185, 129, 0.3);
           transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
           position: relative;
           overflow: hidden;
@@ -147,15 +177,15 @@ const Navbar = () => {
         }
         
         .cta-btn:hover {
-          box-shadow: 0 6px 25px rgba(201, 164, 150, 0.4);
-          transform: translateY(-2px);
+          box-shadow: 0 6px 25px rgba(16, 185, 129, 0.4);
+          transform: translateY(-2px) scale(1.05);
         }
         
         .hamburger-line {
           display: block;
           width: 28px;
           height: 2.5px;
-          background: #333333;
+          background: #059669;
           border-radius: 2px;
           transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
         }
@@ -210,23 +240,39 @@ const Navbar = () => {
         .mobile-menu-item:nth-child(6) { animation-delay: 0.3s; }
         .mobile-menu-item:nth-child(7) { animation-delay: 0.35s; }
         .mobile-menu-item:nth-child(8) { animation-delay: 0.4s; }
-        .mobile-menu-item:nth-child(9) { animation-delay: 0.45s; }
         
-        .sparkle-icon {
-          filter: drop-shadow(0 0 8px rgba(201, 164, 150, 0.4));
-          animation: sparkleRotate 3s ease-in-out infinite;
+        .logo-img {
+          transition: all 0.3s ease;
+          filter: drop-shadow(0 2px 8px rgba(16, 185, 129, 0.2));
         }
         
-        @keyframes sparkleRotate {
-          0%, 100% { transform: rotate(0deg); }
-          50% { transform: rotate(180deg); }
+        .logo-img:hover {
+          transform: scale(1.05);
+          filter: drop-shadow(0 4px 12px rgba(16, 185, 129, 0.3));
+        }
+
+        .more-btn {
+          position: relative;
+          transition: all 0.3s ease;
+        }
+
+        .more-btn:hover {
+          color: #10b981;
+        }
+
+        .more-icon {
+          transition: transform 0.3s ease;
+        }
+
+        .dropdown-container:hover .more-icon {
+          transform: rotate(180deg);
         }
       `}</style>
 
       <nav
         className={`fixed top-0 left-0 right-0 z-50 transition-all duration-500 ${
           scrolled
-            ? 'glass-effect-dark shadow-xl'
+            ? 'glass-effect-dark shadow-xl border-b border-emerald-100'
             : 'glass-effect shadow-md'
         }`}
       >
@@ -236,28 +282,24 @@ const Navbar = () => {
             {/* Logo */}
             <NavLink
               to="/"
-              className="flex items-center space-x-3 group"
+              className="flex items-center group"
               onClick={() => setIsOpen(false)}
             >
-              <Sparkles 
-                className="w-7 h-7 text-[#C9A496] sparkle-icon transition-transform duration-300 group-hover:scale-110" 
-                strokeWidth={1.5} 
+              <img 
+                src="/src/assets/logo.png" 
+                alt="Gulzar Laser & Aesthetics Centre" 
+                className="h-12 lg:h-16 w-auto logo-img"
               />
-              <div className="logo-container">
-                <h1 className="logo-gradient text-2xl lg:text-3xl font-semibold tracking-wide transition-all duration-300 group-hover:tracking-wider">
-                  Gulzar Laser & Aesthetics Centre
-                </h1>
-              </div>
             </NavLink>
 
             {/* Desktop Navigation */}
-            <div className="hidden xl:flex items-center space-x-2">
-              {navItems.map((item) => (
+            <div className="hidden lg:flex items-center space-x-1">
+              {mainNavItems.map((item) => (
                 <NavLink
                   key={item.path}
                   to={item.path}
                   className={({ isActive }) =>
-                    `nav-link-desktop nav-text px-4 py-2 text-sm font-medium text-[#333333] hover:text-[#C9A496] ${
+                    `nav-link-desktop navbar-font px-4 py-2 text-sm font-medium text-gray-700 hover:text-emerald-600 ${
                       isActive ? 'active' : ''
                     }`
                   }
@@ -266,9 +308,28 @@ const Navbar = () => {
                 </NavLink>
               ))}
               
+              {/* Dropdown Menu */}
+              <div className="dropdown-container">
+                <button className="more-btn navbar-font px-4 py-2 text-sm font-medium text-gray-700 hover:text-emerald-600 flex items-center gap-1">
+                  More
+                  <ChevronDown className="w-4 h-4 more-icon" />
+                </button>
+                <div className="dropdown-menu">
+                  {dropdownItems.map((item) => (
+                    <NavLink
+                      key={item.path}
+                      to={item.path}
+                      className="dropdown-item navbar-font text-sm font-medium"
+                    >
+                      {item.name}
+                    </NavLink>
+                  ))}
+                </div>
+              </div>
+              
               <NavLink
                 to="/book-appointment"
-                className="cta-btn ml-4 px-6 py-3 rounded-full text-[#333333] text-sm font-semibold nav-text"
+                className="cta-btn ml-4 px-6 py-3 rounded-full text-white text-sm font-semibold navbar-font"
               >
                 Book Appointment
               </NavLink>
@@ -277,7 +338,7 @@ const Navbar = () => {
             {/* Mobile Hamburger */}
             <button
               onClick={() => setIsOpen(!isOpen)}
-              className="xl:hidden p-2 rounded-lg hover:bg-[#F8E7EC]/50 transition-colors duration-300 focus:outline-none focus:ring-2 focus:ring-[#C9A496] focus:ring-offset-2"
+              className="lg:hidden p-2 rounded-lg hover:bg-emerald-50 transition-colors duration-300 focus:outline-none focus:ring-2 focus:ring-emerald-500 focus:ring-offset-2"
               aria-label="Toggle navigation menu"
               aria-expanded={isOpen}
             >
@@ -292,19 +353,19 @@ const Navbar = () => {
 
         {/* Mobile Menu Overlay */}
         {isOpen && (
-          <div className="xl:hidden mobile-menu-overlay fixed inset-0 top-20 lg:top-24 bg-[#FFFAF9]/98 backdrop-blur-xl">
+          <div className="lg:hidden mobile-menu-overlay fixed inset-0 top-20 lg:top-24 bg-gradient-to-b from-white via-emerald-50/30 to-white backdrop-blur-xl">
             <div className="h-full overflow-y-auto px-6 py-8">
               <div className="max-w-md mx-auto space-y-2">
-                {navItems.map((item) => (
+                {mainNavItems.map((item) => (
                   <NavLink
                     key={item.path}
                     to={item.path}
                     onClick={() => setIsOpen(false)}
                     className={({ isActive }) =>
-                      `mobile-menu-item mobile-nav-item block pl-6 pr-4 py-4 text-base font-medium nav-text rounded-xl transition-all ${
+                      `mobile-menu-item mobile-nav-item block pl-6 pr-4 py-4 text-base font-medium navbar-font rounded-xl transition-all ${
                         isActive
-                          ? 'text-[#C9A496] bg-[#F8E7EC]/60 active'
-                          : 'text-[#333333] hover:text-[#C9A496] hover:bg-[#F8E7EC]/40'
+                          ? 'text-emerald-600 bg-emerald-50 active'
+                          : 'text-gray-700 hover:text-emerald-600 hover:bg-emerald-50/60'
                       }`
                     }
                   >
@@ -312,10 +373,33 @@ const Navbar = () => {
                   </NavLink>
                 ))}
                 
+                {/* Mobile Dropdown Items */}
+                <div className="pt-4 pb-2">
+                  <p className="px-6 text-xs font-semibold text-gray-500 uppercase tracking-wider navbar-font mb-2">
+                    More
+                  </p>
+                  {dropdownItems.map((item) => (
+                    <NavLink
+                      key={item.path}
+                      to={item.path}
+                      onClick={() => setIsOpen(false)}
+                      className={({ isActive }) =>
+                        `mobile-menu-item mobile-nav-item block pl-6 pr-4 py-3 text-sm font-medium navbar-font rounded-xl transition-all ${
+                          isActive
+                            ? 'text-emerald-600 bg-emerald-50 active'
+                            : 'text-gray-600 hover:text-emerald-600 hover:bg-emerald-50/60'
+                        }`
+                      }
+                    >
+                      {item.name}
+                    </NavLink>
+                  ))}
+                </div>
+                
                 <NavLink
                   to="/book-appointment"
                   onClick={() => setIsOpen(false)}
-                  className="mobile-menu-item cta-btn block text-center mt-8 px-8 py-4 rounded-full text-[#333333] text-base font-semibold nav-text"
+                  className="mobile-menu-item cta-btn block text-center mt-8 px-8 py-4 rounded-full text-white text-base font-semibold navbar-font"
                 >
                   Book Appointment
                 </NavLink>

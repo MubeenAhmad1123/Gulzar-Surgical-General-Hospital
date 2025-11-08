@@ -1,5 +1,12 @@
 import React, { useEffect, useRef, useState } from 'react';
 
+// Import images
+import heroImage from '../assets/hero.webp';
+import doctorPortrait from '../assets/doctorPortrait.webp';
+import clinicInterior from '../assets/clinicInterior.webp';
+import laserTreatment from '../assets/laserTreatment.webp';
+import happyClient from '../assets/happyClient.webp';
+
 const Home = () => {
   const [visibleSections, setVisibleSections] = useState(new Set());
   const [currentSlide, setCurrentSlide] = useState(0);
@@ -26,6 +33,14 @@ const Home = () => {
     { name: "Sarah Ahmed", text: "The hydra facial treatment gave me instant results! My skin has never looked better.", rating: 5 },
     { name: "Fatima Khan", text: "Professional staff and amazing results. Highly recommend their laser treatments.", rating: 5 },
     { name: "Ayesha malik", text: "Best aesthetic center in the city. Dr. Sumaira is incredibly skilled and caring.", rating: 5 }
+  ];
+
+  // Story section images
+  const storyImages = [
+    { src: doctorPortrait, alt: "Dr. Sumaira Gulzar" },
+    { src: clinicInterior, alt: "Clinic Interior" },
+    { src: laserTreatment, alt: "Laser Treatment" },
+    { src: happyClient, alt: "Happy Client" }
   ];
 
   // Animate numbers
@@ -149,11 +164,11 @@ const Home = () => {
               </div>
             </div>
 
-            {/* Right Content - Image */}
+            {/* Right Content - Hero Image */}
             <div className="relative animate-fade-in" style={{ animationDelay: '0.3s' }}>
               <div className="relative z-10 animate-float">
                 <div className="aspect-square bg-gradient-to-br from-emerald-100 via-green-50 to-amber-50 rounded-3xl shadow-2xl overflow-hidden border-4 border-white hover:scale-105 transition-transform duration-500">
-                  <img src="/src/assets/download (3).webp" alt="Gulzar Aesthetics" className="w-full h-full object-cover" />
+                  <img src={heroImage} alt="Gulzar Aesthetics" className="w-full h-full object-cover" />
                 </div>
               </div>
               {/* Decorative Elements */}
@@ -209,18 +224,21 @@ const Home = () => {
               </div>
             </div>
 
+            {/* Story Images Grid */}
             <div className={`grid grid-cols-2 gap-6 transition-all duration-1000 delay-300 ${
               visibleSections.has('story') ? 'opacity-100 translate-x-0' : 'opacity-0 translate-x-10'
             }`}>
-              {[1, 2, 3, 4].map((item, index) => (
+              {storyImages.map((image, index) => (
                 <div 
-                  key={item} 
+                  key={index} 
                   className="aspect-square bg-gradient-to-br from-emerald-100 to-amber-50 rounded-2xl shadow-lg overflow-hidden hover:scale-105 hover:shadow-2xl transition-all duration-500"
                   style={{ transitionDelay: `${index * 100}ms` }}
                 >
-                  <div className="w-full h-full flex items-center justify-center">
-                    <p className="text-gray-500">Image {item}</p>
-                  </div>
+                  <img 
+                    src={image.src} 
+                    alt={image.alt} 
+                    className="w-full h-full object-cover"
+                  />
                 </div>
               ))}
             </div>
