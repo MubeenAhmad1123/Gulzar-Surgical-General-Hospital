@@ -1,8 +1,9 @@
 import React, { useState } from 'react';
 import { HelpCircle } from 'lucide-react';
+import faqsBg from '../assets/faqs-bg.webp'; // your hero background image
 
 const FAQ = ({ 
-  backgroundImage = 'https://images.unsplash.com/photo-1576091160399-112ba8d25d1d?w=1200',
+  backgroundImage = faqsBg, // use your image
   badgeText = 'Common Questions',
   title = 'Frequently Asked Questions',
   subtitle = 'Find answers to common questions about our treatments and services'
