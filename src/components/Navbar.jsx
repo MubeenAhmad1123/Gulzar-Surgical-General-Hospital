@@ -286,7 +286,7 @@ const Navbar = () => {
               onClick={() => setIsOpen(false)}
             >
               <img 
-                src="/src/assets/logo.png" 
+                src="/src/assets/logo.webp" 
                 alt="Gulzar Laser & Aesthetics Centre" 
                 className="h-12 lg:h-16 w-auto logo-img"
               />
