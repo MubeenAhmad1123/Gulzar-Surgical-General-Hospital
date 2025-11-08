@@ -5,6 +5,8 @@ import { Menu, X, ChevronDown } from 'lucide-react';
 const Navbar = () => {
   const [isOpen, setIsOpen] = useState(false);
   const [scrolled, setScrolled] = useState(false);
+  const [isDropdownOpen, setIsDropdownOpen] = useState(false);
+
 
   useEffect(() => {
     const handleScroll = () => {
@@ -97,12 +99,14 @@ const Navbar = () => {
           min-width: 180px;
           overflow: hidden;
         }
-        
-        .dropdown-container:hover .dropdown-menu {
+
+        .dropdown-menu.open {
           opacity: 1;
           transform: translateY(0);
           pointer-events: all;
-        }
+}
+
+
         
         .dropdown-item {
           display: block;
@@ -264,30 +268,30 @@ const Navbar = () => {
           transition: transform 0.3s ease;
         }
 
-        .dropdown-container:hover .more-icon {
-          transform: rotate(180deg);
-        }
+        .dropdown-menu {
+  margin-top: 0;
+}
+
       `}</style>
 
       <nav
-        className={`fixed top-0 left-0 right-0 z-50 transition-all duration-500 ${
-          scrolled
-            ? 'glass-effect-dark shadow-xl border-b border-emerald-100'
-            : 'glass-effect shadow-md'
-        }`}
+        className={`fixed top-0 left-0 right-0 z-50 transition-all duration-500 ${scrolled
+          ? 'glass-effect-dark shadow-xl border-b border-emerald-100'
+          : 'glass-effect shadow-md'
+          }`}
       >
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
           <div className="flex justify-between items-center h-20 lg:h-24">
-            
+
             {/* Logo */}
             <NavLink
               to="/"
               className="flex items-center group"
               onClick={() => setIsOpen(false)}
             >
-              <img 
-                src="/src/assets/logo.webp" 
-                alt="Gulzar Laser & Aesthetics Centre" 
+              <img
+                src="/src/assets/logo.webp"
+                alt="Gulzar Laser & Aesthetics Centre"
                 className="h-12 lg:h-16 w-auto logo-img"
               />
             </NavLink>
@@ -299,22 +303,26 @@ const Navbar = () => {
                   key={item.path}
                   to={item.path}
                   className={({ isActive }) =>
-                    `nav-link-desktop navbar-font px-4 py-2 text-sm font-medium text-gray-700 hover:text-emerald-600 ${
-                      isActive ? 'active' : ''
+                    `nav-link-desktop navbar-font px-4 py-2 text-sm font-medium text-gray-700 hover:text-emerald-600 ${isActive ? 'active' : ''
                     }`
                   }
                 >
                   {item.name}
                 </NavLink>
               ))}
-              
+
               {/* Dropdown Menu */}
-              <div className="dropdown-container">
+              <div
+                className="dropdown-container relative"
+                onMouseEnter={() => setIsDropdownOpen(true)}
+                onMouseLeave={() => setIsDropdownOpen(false)}
+              >
                 <button className="more-btn navbar-font px-4 py-2 text-sm font-medium text-gray-700 hover:text-emerald-600 flex items-center gap-1">
                   More
-                  <ChevronDown className="w-4 h-4 more-icon" />
+                  <ChevronDown className={`w-4 h-4 more-icon ${isDropdownOpen ? 'rotate' : ''}`} />
                 </button>
-                <div className="dropdown-menu">
+
+                <div className={`dropdown-menu ${isDropdownOpen ? 'open' : ''}`}>
                   {dropdownItems.map((item) => (
                     <NavLink
                       key={item.path}
@@ -326,7 +334,8 @@ const Navbar = () => {
                   ))}
                 </div>
               </div>
-              
+
+
               <NavLink
                 to="/book-appointment"
                 className="cta-btn ml-4 px-6 py-3 rounded-full text-white text-sm font-semibold navbar-font"
@@ -362,17 +371,16 @@ const Navbar = () => {
                     to={item.path}
                     onClick={() => setIsOpen(false)}
                     className={({ isActive }) =>
-                      `mobile-menu-item mobile-nav-item block pl-6 pr-4 py-4 text-base font-medium navbar-font rounded-xl transition-all ${
-                        isActive
-                          ? 'text-emerald-600 bg-emerald-50 active'
-                          : 'text-gray-700 hover:text-emerald-600 hover:bg-emerald-50/60'
+                      `mobile-menu-item mobile-nav-item block pl-6 pr-4 py-4 text-base font-medium navbar-font rounded-xl transition-all ${isActive
+                        ? 'text-emerald-600 bg-emerald-50 active'
+                        : 'text-gray-700 hover:text-emerald-600 hover:bg-emerald-50/60'
                       }`
                     }
                   >
                     {item.name}
                   </NavLink>
                 ))}
-                
+
                 {/* Mobile Dropdown Items */}
                 <div className="pt-4 pb-2">
                   <p className="px-6 text-xs font-semibold text-gray-500 uppercase tracking-wider navbar-font mb-2">
@@ -384,10 +392,9 @@ const Navbar = () => {
                       to={item.path}
                       onClick={() => setIsOpen(false)}
                       className={({ isActive }) =>
-                        `mobile-menu-item mobile-nav-item block pl-6 pr-4 py-3 text-sm font-medium navbar-font rounded-xl transition-all ${
-                          isActive
-                            ? 'text-emerald-600 bg-emerald-50 active'
-                            : 'text-gray-600 hover:text-emerald-600 hover:bg-emerald-50/60'
+                        `mobile-menu-item mobile-nav-item block pl-6 pr-4 py-3 text-sm font-medium navbar-font rounded-xl transition-all ${isActive
+                          ? 'text-emerald-600 bg-emerald-50 active'
+                          : 'text-gray-600 hover:text-emerald-600 hover:bg-emerald-50/60'
                         }`
                       }
                     >
@@ -395,7 +402,7 @@ const Navbar = () => {
                     </NavLink>
                   ))}
                 </div>
-                
+
                 <NavLink
                   to="/book-appointment"
                   onClick={() => setIsOpen(false)}
