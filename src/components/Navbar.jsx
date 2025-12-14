@@ -1,6 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import { NavLink } from 'react-router-dom';
 import { Menu, X, ChevronDown } from 'lucide-react';
+import logo from '../assets/logo.webp';
 
 const Navbar = () => {
   const [isOpen, setIsOpen] = useState(false);
@@ -289,11 +290,11 @@ const Navbar = () => {
               className="flex items-center group"
               onClick={() => setIsOpen(false)}
             >
-              <img
-                src="/src/assets/logo.webp"
-                alt="Gulzar Laser & Aesthetics Centre"
-                className="h-12 lg:h-16 w-auto logo-img"
-              />
+<img
+              src={logo}  // ← CHANGED HERE
+              alt="Gulzar Laser & Aesthetics Centre"
+              className="h-12 lg:h-16 w-auto logo-img"
+            />
             </NavLink>
 
             {/* Desktop Navigation */}

@@ -1,6 +1,7 @@
 import React, { useState } from 'react';
 import { Facebook, Instagram, Linkedin, Youtube, MapPin, Mail, Phone, Clock, Send, Heart, Sparkles, } from 'lucide-react';
 import emailjs from '@emailjs/browser';
+import { Link } from 'react-router-dom';
 
 
 import Call from '../assets/call.webp';
@@ -678,56 +679,55 @@ const handleSubscribe = async () => {
               </div>
             </div>
 
-            {/* Column 2: Quick Links */}
-            <div className="fade-in-up fade-in-up-2">
-              <h3 className="section-title text-sm mb-6 text-[#A5C3B1]">
-                Quick Links
-              </h3>
-              <ul className="space-y-3">
-                {quickLinks.map((link, index) => (
-                  <li key={index}>
-                    <a 
-                      href={link.path}
-                      className="footer-link text-slate-300 text-sm"
-                    >
-                      {link.name}
-                    </a>
-                  </li>
-                ))}
-              </ul>
-            </div>
+           {/* Column 2: Quick Links */}
+<div className="fade-in-up fade-in-up-2">
+  <h3 className="section-title text-sm mb-6 text-[#A5C3B1]">
+    Quick Links
+  </h3>
+  <ul className="space-y-3">
+    {quickLinks.map((link, index) => (
+      <li key={index}>
+        <Link 
+          to={link.path}
+          className="footer-link text-slate-300 text-sm"
+        >
+          {link.name}
+        </Link>
+      </li>
+    ))}
+  </ul>
+</div>
 
-            {/* Column 3: Resources & Hours */}
-            <div className="fade-in-up fade-in-up-3">
-              <h3 className="section-title text-sm mb-6 text-[#A5C3B1]">
-                Resources
-              </h3>
-              <ul className="space-y-3 mb-8">
-                {resources.map((link, index) => (
-                  <li key={index}>
-                    <a 
-                      href={link.path}
-                      className="footer-link text-slate-300 text-sm"
-                    >
-                      {link.name}
-                    </a>
-                  </li>
-                ))}
-              </ul>
+{/* Column 3: Resources & Hours */}
+<div className="fade-in-up fade-in-up-3">
+  <h3 className="section-title text-sm mb-6 text-[#A5C3B1]">
+    Resources
+  </h3>
+  <ul className="space-y-3 mb-8">
+    {resources.map((link, index) => (
+      <li key={index}>
+        <Link 
+          to={link.path}
+          className="footer-link text-slate-300 text-sm"
+        >
+          {link.name}
+        </Link>
+      </li>
+    ))}
+  </ul>
 
-              {/* Working Hours */}
-              <div className="glass-footer rounded-xl p-4 mt-6">
-                <div className="flex items-center gap-2 mb-3">
-                  <Clock className="w-4 h-4 text-[#C9A496]" />
-                  <h4 className="text-sm font-semibold text-[#A5C3B1]">Working Hours</h4>
-                </div>
-                <p className="text-xs text-slate-300 leading-relaxed">
-                  Mon - Sat: 9:00 AM - 8:00 PM<br/>
-                  Sunday: 10:00 AM - 6:00 PM
-                </p>
-              </div>
-            </div>
-
+  {/* Working Hours */}
+  <div className="glass-footer rounded-xl p-4 mt-6">
+    <div className="flex items-center gap-2 mb-3">
+      <Clock className="w-4 h-4 text-[#C9A496]" />
+      <h4 className="text-sm font-semibold text-[#A5C3B1]">Working Hours</h4>
+    </div>
+    <p className="text-xs text-slate-300 leading-relaxed">
+      Mon - Sat: 9:00 AM - 8:00 PM<br/>
+      Sunday: 10:00 AM - 6:00 PM
+    </p>
+  </div>
+</div>
             {/* Column 4: Contact & Newsletter */}
             <div className="fade-in-up fade-in-up-4">
               <h3 className="section-title text-sm mb-6 text-[#A5C3B1]">
