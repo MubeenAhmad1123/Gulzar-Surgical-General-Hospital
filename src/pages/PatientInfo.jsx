@@ -1,15 +1,15 @@
 import React, { useState, useEffect, useRef } from 'react';
 import { Calendar, Clock, CreditCard, FileText, CheckCircle, Phone, Mail, Download, AlertCircle, Heart, Shield, Sparkles, ExternalLink } from 'lucide-react';
-
+import { Link } from 'react-router-dom';
 // Import images
-import patientInfoBg from '../assets/paitent-info-bg.webp';
+import patientInfoBg from '../assets/paitent_info_bg.webp';
 import consultationImage from '../assets/counsultation.webp';
-import newPatientRegImage from '../assets/new-patient-registration.webp';
-import medicalHistoryImage from '../assets/medical-history.webp';
-import treatmentConsentImage from '../assets/treatment-concent.webp';
+import newPatientRegImage from '../assets/new_patient_registration.webp';
+import medicalHistoryImage from '../assets/medical_history.webp';
+import treatmentConsentImage from '../assets/treatment_concent.webp';
 import insuranceImage from '../assets/insurence.webp';
-import patientDoctorImage from '../assets/patient-doctor.webp';
-import visitingPatientImage from '../assets/visiting-patient.webp';
+import patientDoctorImage from '../assets/patient_doctor.webp';
+import visitingPatientImage from '../assets/visiting_patient.webp';
 import emergencyImage from '../assets/emergency.webp';
 import receptionImage from '../assets/reception.webp';
 
@@ -196,10 +196,11 @@ Contact: 0303 7181546
                   Schedule your visit by calling us at <span className="font-bold text-white">0303 7181546</span> or use our online contact form. We recommend booking in advance to ensure your preferred time slot.
                 </p>
                 <div className="flex flex-col sm:flex-row gap-4">
-                  <button className="bg-white text-emerald-600 px-6 py-3 rounded-xl font-semibold hover:bg-emerald-50 transition-all flex items-center justify-center gap-2 shadow-lg hover:scale-105 transform">
+                  <Link 
+    to="/book-appointment" className="bg-white text-emerald-600 px-6 py-3 rounded-xl font-semibold hover:bg-emerald-50 transition-all flex items-center justify-center gap-2 shadow-lg hover:scale-105 transform">
                     <Calendar className="w-5 h-5" />
                     Book Now
-                  </button>
+                  </Link>
                   <a href="tel:03037181546" className="bg-emerald-700 text-white px-6 py-3 rounded-xl font-semibold hover:bg-emerald-800 transition-all flex items-center justify-center gap-2 border-2 border-white/30 hover:scale-105 transform">
                     <Phone className="w-5 h-5" />
                     Call Us

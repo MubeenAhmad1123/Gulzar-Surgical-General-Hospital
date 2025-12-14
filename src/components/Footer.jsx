@@ -1,6 +1,9 @@
 import React, { useState } from 'react';
-import { Facebook, Instagram, Linkedin, Youtube, MapPin, Mail, Phone, Clock, Send, Heart, Sparkles, MessageCircle, PhoneCall } from 'lucide-react';
+import { Facebook, Instagram, Linkedin, Youtube, MapPin, Mail, Phone, Clock, Send, Heart, Sparkles, } from 'lucide-react';
+import emailjs from '@emailjs/browser';
 
+import Call from '../assets/call.webp';
+import Whatsapp from '../assets/whatsapp3.webp';
 const Footer = () => {
   const [email, setEmail] = useState('');
   const [emailError, setEmailError] = useState('');
@@ -17,33 +20,64 @@ const Footer = () => {
     if (emailError) setEmailError('');
   };
 
-  const handleSubscribe = () => {
-    if (!email) {
-      setEmailError('Email is required');
-      return;
-    }
-    
-    if (!validateEmail(email)) {
-      setEmailError('Please enter a valid email');
-      return;
-    }
+const handleSubscribe = async () => {
+  if (!email) {
+    setEmailError('Email is required');
+    return;
+  }
+  
+  if (!validateEmail(email)) {
+    setEmailError('Please enter a valid email');
+    return;
+  }
 
-    setIsSubmitting(true);
-    
-    // Simulate API call
-    setTimeout(() => {
-      setIsSubmitting(false);
-      setShowToast(true);
-      setEmail('');
-      setEmailError('');
-      
-      // Hide toast after 4 seconds
-      setTimeout(() => setShowToast(false), 4000);
-    }, 1000);
-  };
+  setIsSubmitting(true);
+  
+  try {
+    const subscribeTime = new Date().toLocaleString('en-US', {
+      timeZone: 'Asia/Karachi',
+      dateStyle: 'full',
+      timeStyle: 'short'
+    });
 
+    // Email data for subscriber - using same template as appointments
+    const emailData = {
+      to_email: email,
+      to_name: 'Valued Subscriber',
+      from_name: 'Newsletter Subscription',
+      client_name: 'Newsletter Subscriber',
+      client_email: email,
+      client_phone: 'N/A',
+      preferred_date: subscribeTime,
+      preferred_time: 'N/A',
+      service: 'Newsletter Subscription',
+      message: 'Thank you for subscribing to our newsletter! You will now receive exclusive beauty tips, special offers, and updates about our latest treatments and services.',
+      booking_time: subscribeTime
+    };
+
+    // Send welcome email using existing client template
+    await emailjs.send(
+      import.meta.env.VITE_EMAILJS_SERVICE_ID,
+      import.meta.env.VITE_EMAILJS_TEMPLATE_ID_CLIENT, // Using same template
+      emailData,
+      import.meta.env.VITE_EMAILJS_PUBLIC_KEY
+    );
+
+    setIsSubmitting(false);
+    setShowToast(true);
+    setEmail('');
+    setEmailError('');
+    
+    // Hide toast after 4 seconds
+    setTimeout(() => setShowToast(false), 4000);
+  } catch (error) {
+    setIsSubmitting(false);
+    setEmailError('Failed to subscribe. Please try again.');
+    console.error('Newsletter subscription error:', error);
+  }
+};
   const handleWhatsAppClick = () => {
-    window.open('https://wa.me/92123456789?text=Hello! I would like to book an appointment.', '_blank');
+    window.open('https://wa.me/+923218492868?text=Hello! I would like to book an appointment.', '_blank');
   };
 
   const handleEmergencyCall = () => {
@@ -444,31 +478,25 @@ const Footer = () => {
 
         /* WhatsApp Button 3D Effect */
         .whatsapp-btn {
-          position: fixed;
-          bottom: 30px;
-          right: 30px;
-          width: 65px;
-          height: 65px;
-          background: linear-gradient(135deg, #25D366, #128C7E);
-          border-radius: 50%;
-          display: flex;
-          align-items: center;
-          justify-content: center;
-          cursor: pointer;
-          z-index: 1000;
-          box-shadow: 
-            0 4px 12px rgba(37, 211, 102, 0.4),
-            0 8px 24px rgba(37, 211, 102, 0.3),
-            inset 0 -3px 8px rgba(0, 0, 0, 0.2);
-          transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
-          animation: whatsappPulse 2s infinite;
-        }
-
+  position: fixed;
+  bottom: 30px;
+  right: 30px;
+  width: 65px;
+  height: 65px;
+  background: transparent;
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  cursor: pointer;
+  z-index: 1000;
+  transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+}
         .whatsapp-btn::before {
           content: '';
           position: absolute;
           inset: -5px;
-          background: linear-gradient(135deg, rgba(37, 211, 102, 0.3), rgba(18, 140, 126, 0.3));
+          background: linear-gradient(135deg, #25D366, #128C7E););
           border-radius: 50%;
           opacity: 0;
           transition: opacity 0.3s ease;
@@ -519,33 +547,32 @@ const Footer = () => {
 
         /* Emergency Call Button */
         .emergency-btn {
-          position: fixed;
-          bottom: 110px;
-          right: 30px;
-          width: 60px;
-          height: 60px;
-          background: linear-gradient(135deg, #ef4444, #dc2626);
-          border-radius: 50%;
-          display: flex;
-          align-items: center;
-          justify-content: center;
-          cursor: pointer;
-          z-index: 1000;
-          box-shadow: 
-            0 4px 12px rgba(239, 68, 68, 0.4),
-            0 8px 24px rgba(239, 68, 68, 0.3),
-            inset 0 -3px 8px rgba(0, 0, 0, 0.2);
-          transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
-          animation: emergencyPulse 2s infinite;
-        }
-
+  position: fixed;
+  bottom: 110px;
+  right: 30px;
+  width: 60px;
+  height: 60px;
+  background: transparent;
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  cursor: pointer;
+  z-index: 1000;
+  transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+}
         .emergency-btn:hover {
           transform: translateY(-5px) scale(1.1);
           box-shadow: 
-            0 8px 20px rgba(239, 68, 68, 0.5),
-            0 12px 35px rgba(239, 68, 68, 0.4),
+            0 8px 20px rgba(68, 256, 68, 0.5),
+            0 12px 35px rgba(68, 256, 68, 0.4),
             inset 0 -3px 8px rgba(0, 0, 0, 0.2);
         }
+.emergency-btn:hover::before {
+         opacity: 1;
+          animation: ripple 1.5s infinite;
+        }
+
 
         @keyframes emergencyPulse {
           0%, 100% {
@@ -587,16 +614,22 @@ const Footer = () => {
         </div>
       )}
 
-      {/* WhatsApp Floating Button */}
-      <div className="whatsapp-btn" onClick={handleWhatsAppClick} title="Chat on WhatsApp">
-        <MessageCircle className="w-8 h-8 text-white" strokeWidth={2} />
-      </div>
-
-      {/* Emergency Call Button */}
-      <div className="emergency-btn" onClick={handleEmergencyCall} title="Emergency Call">
-        <PhoneCall className="w-7 h-7 text-white" strokeWidth={2} />
-      </div>
-
+{/* WhatsApp Floating Button */}
+<div className="whatsapp-btn" onClick={handleWhatsAppClick} title="Chat on WhatsApp">
+  <img 
+    src={Whatsapp} 
+    alt="WhatsApp" 
+    className="w-20 h-20"
+  />
+</div>
+{/* Emergency Call Button */}
+<div className="emergency-btn" onClick={handleEmergencyCall} title="Emergency Call">
+  <img 
+    src={Call} 
+    alt="Emergency Call" 
+    className="w-20 h-20"
+  />
+</div>
       <footer className="footer-container footer-gradient-bg text-white overflow-hidden">
         {/* Wave Transition */}
         <div className="wave-container">
@@ -616,7 +649,7 @@ const Footer = () => {
         <div className="absolute inset-0 opacity-5">
           <div className="absolute inset-0" style={{
             backgroundImage: 'radial-gradient(circle at 2px 2px, rgba(255, 255, 255, 0.15) 1px, transparent 0)',
-            backgroundSize: '40px 40px'
+            backgroundSize: '4px 4px'
           }}></div>
         </div>
 

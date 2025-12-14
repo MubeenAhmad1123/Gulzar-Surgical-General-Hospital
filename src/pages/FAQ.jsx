@@ -1,6 +1,6 @@
 import React, { useState } from 'react';
 import { HelpCircle } from 'lucide-react';
-import faqsBg from '../assets/faqs-bg.webp'; // your hero background image
+import faqsBg from '../assets/faqs_bg.webp'; // your hero background image
 
 const FAQ = ({ 
   backgroundImage = faqsBg, // use your image

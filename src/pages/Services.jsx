@@ -1,27 +1,27 @@
 import React, { useState, useEffect, useRef } from 'react';
 import { Sparkles, Droplet, Zap, Star, Heart, Shield, Clock, Award, TrendingUp, Smile, Sun, Wind } from 'lucide-react';
-
+import { Link } from 'react-router-dom';
 // Import service images
-import faceHIFU from '../assets/Face_HIFU.webp';
-import weightLossDrips from '../assets/Weight_Loss_Drips.webp';
-import hydraFacial from '../assets/HydraFacial_Glow.webp';
-import whiteningDrips from '../assets/Whitening_Drips.webp';
-import prpTreatment from '../assets/PRP_Micnendnilling_Treatment.webp';
-import hollywoodPeel from '../assets/Hollywood _peel.webp';
-import chemicalPeel from '../assets/Chemical_Peel_Treatement.webp';
-import bbGlow from '../assets/Semi_Permanent_Foundation.webp';
-import iplTreatment from '../assets/IPL_Treatement.webp';
-import dermalFillers from '../assets/Dermal_Fillers.webp';
-import cheekContouring from '../assets/Cheek_Contouring.webp';
-import laserHairRemoval from '../assets/Laser_Hair_Removal.webp';
-import acneTreatment from '../assets/Acne_Pignntation_Treatement.webp';
-import skinGlow from '../assets/Skin_Glow_Enhancment.webp';
-import lesionRemoval from '../assets/Lesion_Removal.webp';
-import antiAging from '../assets/Anti-Aging_Treatments.webp';
-import dentalServices from '../assets/Dental_Services.webp';
-import qualityAssured from '../assets/Quality_Assured.webp';
-import expertTeam from '../assets/Expert_Team.webp';
-import servicesBg from '../assets/services-section-bg.webp';
+import faceHIFU from '../assets/face_hifu.webp';
+import weightLossDrips from '../assets/wieghtloss_drip.webp';
+import hydraFacial from '../assets/hydraFacial_glow.webp';
+import whiteningDrips from '../assets/whiteing_drips.webp';
+import prpTreatment from '../assets/platelet_rich_plasma_therapy.webp';
+import hollywoodPeel from '../assets/hollywood_peel.webp';
+import chemicalPeel from '../assets/chemical_peel.webp';
+import iplTreatment from '../assets/ipl_treatment.webp';
+import dermalFillers from '../assets/dermal_filer.webp';
+import cheekContouring from '../assets/cheek_countouring.webp';
+import laserHairRemoval from '../assets/laser_hair_removal.webp';
+import acneTreatment from '../assets/acne_pignntation_treatement.webp';
+import skinGlow from '../assets/skin_glow_enhancment.webp';
+import lesionRemoval from '../assets/lesion_removal.webp';
+import antiAging from '../assets/anti_aging_treatments.webp';
+import dentalServices from '../assets/dental_services.webp';
+import qualityAssured from '../assets/quality_assured.webp';
+import expertTeam from '../assets/expert_team.webp';
+import servicesBg from '../assets/services_section_bg.webp';
+// skinGlow, lesionRemoval, dentalServices, qualityAssured, expertTeam
 
 const Services = () => {
   const [visibleCards, setVisibleCards] = useState(new Set());
@@ -102,14 +102,7 @@ const Services = () => {
       gradient: "from-amber-500 to-orange-500",
       image: hydraFacial
     },
-    {
-      name: "BB Glow Treatment",
-      price: "5,000",
-      description: "Semi-permanent foundation for flawless, natural-looking coverage",
-      icon: Sun,
-      gradient: "from-yellow-500 to-amber-500",
-      image: bbGlow
-    },
+   
     {
       name: "Hollywood Facial",
       price: "5,000",
@@ -490,9 +483,10 @@ const Services = () => {
             Book a consultation with our experts and discover the perfect treatment plan for your skin
           </p>
           <div className="flex flex-col sm:flex-row gap-3 sm:gap-4 justify-center">
-            <button className="bg-white text-emerald-600 px-6 sm:px-8 py-3 sm:py-4 rounded-full font-semibold text-base sm:text-lg hover:bg-emerald-50 transition-colors duration-300 shadow-lg hover:shadow-xl">
+           <Link 
+    to="/book-appointment" className="bg-white text-emerald-600 px-6 sm:px-8 py-3 sm:py-4 rounded-full font-semibold text-base sm:text-lg hover:bg-emerald-50 transition-colors duration-300 shadow-lg hover:shadow-xl">
               Book Consultation
-            </button>
+            </Link>
             <button className="bg-emerald-700 text-white px-6 sm:px-8 py-3 sm:py-4 rounded-full font-semibold text-base sm:text-lg hover:bg-emerald-800 transition-colors duration-300 border-2 border-white/30">
               View Price List
             </button>

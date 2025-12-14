@@ -33,7 +33,7 @@ const Navbar = () => {
 
   const dropdownItems = [
     { name: 'Patient Info', path: '/patient-info' },
-    { name: 'FAQ', path: '/faq' },
+  
     { name: 'Gallery', path: '/gallery' },
   ];
 
@@ -362,8 +362,8 @@ const Navbar = () => {
 
         {/* Mobile Menu Overlay */}
         {isOpen && (
-          <div className="lg:hidden mobile-menu-overlay fixed inset-0 top-20 lg:top-24 bg-gradient-to-b from-white via-emerald-50/30 to-white backdrop-blur-xl">
-            <div className="h-full overflow-y-auto px-6 py-8">
+          <div className="lg:hidden mobile-menu-overlay fixed  top-20 lg:top-24 bg-white w-full">
+            <div className="h-full  w-fulloverflow-y-auto px-6 py-9">
               <div className="max-w-md mx-auto space-y-2">
                 {mainNavItems.map((item) => (
                   <NavLink

@@ -1,5 +1,7 @@
 import { useState } from 'react';
-import { Calendar, Clock, User, Mail, Phone, MessageSquare, CheckCircle, Sparkles, Heart } from 'lucide-react';
+import { Calendar, Clock, User, Mail, Phone, MessageSquare, CheckCircle, Sparkles, Heart, AlertCircle, Loader2 } from 'lucide-react';
+import { supabase } from '../lib/supabaseClient';
+import emailjs from '@emailjs/browser';
 
 export default function BookAppointment() {
   const [formData, setFormData] = useState({
@@ -12,6 +14,8 @@ export default function BookAppointment() {
     message: ''
   });
   const [submitted, setSubmitted] = useState(false);
+  const [loading, setLoading] = useState(false);
+  const [error, setError] = useState('');
 
   const services = [
     { category: 'Premium Facials', items: [
@@ -66,34 +70,128 @@ export default function BookAppointment() {
       ...formData,
       [e.target.name]: e.target.value
     });
+    setError(''); // Clear error when user starts typing
   };
 
-  const handleSubmit = () => {
+  const sendEmails = async (appointmentData) => {
+    try {
+      const bookingTime = new Date().toLocaleString('en-US', {
+        timeZone: 'Asia/Karachi',
+        dateStyle: 'full',
+        timeStyle: 'short'
+      });
+
+      const emailData = {
+        name: appointmentData.name,
+        email: appointmentData.email,
+        phone: appointmentData.phone,
+        date: appointmentData.appointment_date,
+        time: appointmentData.appointment_time,
+        service: appointmentData.service,
+        message: appointmentData.message || 'No additional notes',
+        booking_time: bookingTime
+      };
+
+      // Send email to admin
+      await emailjs.send(
+        import.meta.env.VITE_EMAILJS_SERVICE_ID,
+        import.meta.env.VITE_EMAILJS_TEMPLATE_ID_ADMIN,
+        emailData,
+        import.meta.env.VITE_EMAILJS_PUBLIC_KEY
+      );
+
+      // Send confirmation email to client
+      await emailjs.send(
+        import.meta.env.VITE_EMAILJS_SERVICE_ID,
+        import.meta.env.VITE_EMAILJS_TEMPLATE_ID_CLIENT,
+        emailData,
+        import.meta.env.VITE_EMAILJS_PUBLIC_KEY
+      );
+
+      return true;
+    } catch (error) {
+      console.error('Email sending error:', error);
+      return false;
+    }
+  };
+
+  const handleSubmit = async () => {
+    // Validation
     if (!formData.name || !formData.email || !formData.phone || !formData.date || !formData.time || !formData.service) {
-      alert('Please fill in all required fields');
+      setError('Please fill in all required fields');
       return;
     }
-    setSubmitted(true);
-    setTimeout(() => {
-      setSubmitted(false);
-      setFormData({
-        name: '',
-        email: '',
-        phone: '',
-        date: '',
-        time: '',
-        service: '',
-        message: ''
-      });
-    }, 5000);
+
+    // Email validation
+    const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+    if (!emailRegex.test(formData.email)) {
+      setError('Please enter a valid email address');
+      return;
+    }
+
+    setLoading(true);
+    setError('');
+
+    try {
+      // Save to Supabase
+      const { data, error: supabaseError } = await supabase
+        .from('appointments')
+        .insert([
+          {
+            name: formData.name,
+            email: formData.email,
+            phone: formData.phone,
+            appointment_date: formData.date,
+            appointment_time: formData.time,
+            service: formData.service,
+            message: formData.message,
+            status: 'Pending'
+          }
+        ])
+        .select();
+
+      if (supabaseError) {
+        throw new Error(supabaseError.message);
+      }
+
+      // Send emails
+      const emailsSent = await sendEmails(data[0]);
+      
+      if (!emailsSent) {
+        console.warn('Emails failed to send, but appointment was saved');
+      }
+
+      // Show success message
+      setSubmitted(true);
+      setLoading(false);
+
+      // Reset form after 5 seconds
+      setTimeout(() => {
+        setSubmitted(false);
+        setFormData({
+          name: '',
+          email: '',
+          phone: '',
+          date: '',
+          time: '',
+          service: '',
+          message: ''
+        });
+      }, 5000);
+
+    } catch (err) {
+      console.error('Submission error:', err);
+      setError('Failed to book appointment. Please try again or call us directly.');
+      setLoading(false);
+    }
   };
 
   if (submitted) {
     return (
       <div className="min-h-screen bg-gradient-to-b from-stone-50 via-amber-50/30 to-stone-50 flex items-center justify-center p-4">
-        <div className="bg-white rounded-3xl shadow-2xl p-8 md:p-12 max-w-2xl w-full text-center border border-emerald-100/50">
+        <div className="bg-white rounded-3xl shadow-2xl p-8 md:p-12 max-w-2xl w-full text-center border border-emerald-100/50 animate-fadeIn">
           <div className="flex justify-center mb-6">
-            <div className="bg-gradient-to-br from-emerald-100 to-teal-100 rounded-full p-6 shadow-lg">
+            <div className="bg-gradient-to-br from-emerald-100 to-teal-100 rounded-full p-6 shadow-lg animate-bounce">
               <CheckCircle className="w-20 h-20 text-emerald-600" />
             </div>
           </div>
@@ -117,11 +215,11 @@ export default function BookAppointment() {
           <div className="bg-amber-50 border border-amber-200 rounded-xl p-4 mb-6">
             <p className="text-sm text-amber-800">
               <strong>📧 Confirmation Email Sent</strong><br />
-              Please check {formData.email} for your appointment details
+              Please check <strong>{formData.email}</strong> for your appointment details
             </p>
           </div>
           <p className="text-sm text-slate-500">
-            Our team will contact you shortly to confirm your appointment
+            Our team will contact you shortly at <strong>{formData.phone}</strong> to confirm your appointment
           </p>
         </div>
       </div>
@@ -144,6 +242,17 @@ export default function BookAppointment() {
             Schedule your consultation with our expert aesthetic professionals
           </p>
         </div>
+
+        {/* Error Alert */}
+        {error && (
+          <div className="max-w-5xl mx-auto mb-6 bg-red-50 border-2 border-red-200 rounded-xl p-4 flex items-start gap-3 animate-shake">
+            <AlertCircle className="w-5 h-5 text-red-600 flex-shrink-0 mt-0.5" />
+            <div>
+              <h3 className="font-semibold text-red-800">Error</h3>
+              <p className="text-sm text-red-600">{error}</p>
+            </div>
+          </div>
+        )}
 
         {/* Form Card */}
         <div className="bg-white rounded-3xl shadow-2xl overflow-hidden border border-emerald-100/50">
@@ -178,6 +287,7 @@ export default function BookAppointment() {
                     onChange={handleChange}
                     className="w-full px-4 py-3 border-2 border-emerald-100 rounded-xl focus:ring-2 focus:ring-emerald-500 focus:border-emerald-500 transition bg-stone-50"
                     placeholder="Enter your full name"
+                    disabled={loading}
                   />
                 </div>
 
@@ -193,6 +303,7 @@ export default function BookAppointment() {
                     onChange={handleChange}
                     className="w-full px-4 py-3 border-2 border-emerald-100 rounded-xl focus:ring-2 focus:ring-emerald-500 focus:border-emerald-500 transition bg-stone-50"
                     placeholder="your.email@example.com"
+                    disabled={loading}
                   />
                 </div>
 
@@ -207,7 +318,8 @@ export default function BookAppointment() {
                     value={formData.phone}
                     onChange={handleChange}
                     className="w-full px-4 py-3 border-2 border-emerald-100 rounded-xl focus:ring-2 focus:ring-emerald-500 focus:border-emerald-500 transition bg-stone-50"
-                    placeholder="+92 300 1234567"
+                    placeholder="03001234567"
+                    disabled={loading}
                   />
                 </div>
               </div>
@@ -231,6 +343,7 @@ export default function BookAppointment() {
                     onChange={handleChange}
                     min={new Date().toISOString().split('T')[0]}
                     className="w-full px-4 py-3 border-2 border-emerald-100 rounded-xl focus:ring-2 focus:ring-emerald-500 focus:border-emerald-500 transition bg-stone-50"
+                    disabled={loading}
                   />
                 </div>
 
@@ -244,6 +357,7 @@ export default function BookAppointment() {
                     value={formData.time}
                     onChange={handleChange}
                     className="w-full px-4 py-3 border-2 border-emerald-100 rounded-xl focus:ring-2 focus:ring-emerald-500 focus:border-emerald-500 transition bg-stone-50"
+                    disabled={loading}
                   >
                     <option value="">Select a time slot</option>
                     {timeSlots.map((slot) => (
@@ -264,6 +378,7 @@ export default function BookAppointment() {
                     value={formData.service}
                     onChange={handleChange}
                     className="w-full px-4 py-3 border-2 border-emerald-100 rounded-xl focus:ring-2 focus:ring-emerald-500 focus:border-emerald-500 transition bg-stone-50"
+                    disabled={loading}
                   >
                     <option value="">Select a service</option>
                     {services.map((category) => (
@@ -293,6 +408,7 @@ export default function BookAppointment() {
                 rows="4"
                 className="w-full px-4 py-3 border-2 border-emerald-100 rounded-xl focus:ring-2 focus:ring-emerald-500 focus:border-emerald-500 transition resize-none bg-stone-50"
                 placeholder="Please share any concerns, allergies, or specific requirements..."
+                disabled={loading}
               />
             </div>
 
@@ -314,10 +430,24 @@ export default function BookAppointment() {
             {/* Submit Button */}
             <button
               onClick={handleSubmit}
-              className="w-full bg-gradient-to-r from-emerald-600 to-teal-600 text-white font-bold py-4 px-6 rounded-xl hover:from-emerald-700 hover:to-teal-700 transition-all duration-300 shadow-lg hover:shadow-xl transform hover:-translate-y-0.5 flex items-center justify-center gap-2 text-lg"
+              disabled={loading}
+              className={`w-full bg-gradient-to-r from-emerald-600 to-teal-600 text-white font-bold py-4 px-6 rounded-xl transition-all duration-300 shadow-lg flex items-center justify-center gap-2 text-lg ${
+                loading 
+                  ? 'opacity-70 cursor-not-allowed' 
+                  : 'hover:from-emerald-700 hover:to-teal-700 hover:shadow-xl transform hover:-translate-y-0.5'
+              }`}
             >
-              <CheckCircle className="w-6 h-6" />
-              Confirm Appointment
+              {loading ? (
+                <>
+                  <Loader2 className="w-6 h-6 animate-spin" />
+                  Booking Appointment...
+                </>
+              ) : (
+                <>
+                  <CheckCircle className="w-6 h-6" />
+                  Confirm Appointment
+                </>
+              )}
             </button>
 
             <p className="text-sm text-slate-500 text-center mt-4">
@@ -330,17 +460,38 @@ export default function BookAppointment() {
         <div className="mt-8 text-center">
           <p className="text-slate-600 mb-2">Need immediate assistance?</p>
           <div className="flex flex-wrap justify-center gap-4">
-            <a href="tel:+923001234567" className="inline-flex items-center gap-2 bg-white px-6 py-3 rounded-full shadow-md hover:shadow-lg transition-shadow border border-emerald-100">
+            <a href="tel:+923218492868" className="inline-flex items-center gap-2 bg-white px-6 py-3 rounded-full shadow-md hover:shadow-lg transition-shadow border border-emerald-100">
               <Phone className="w-4 h-4 text-emerald-600" />
-              <span className="font-semibold text-slate-700">Call: +92 300 1234567</span>
+              <span className="font-semibold text-slate-700">Call: 03218492868</span>
             </a>
-            <a href="mailto:info@gulzarlaser.com" className="inline-flex items-center gap-2 bg-white px-6 py-3 rounded-full shadow-md hover:shadow-lg transition-shadow border border-emerald-100">
+            <a href="mailto:mubeenahma1123@gmail.com" className="inline-flex items-center gap-2 bg-white px-6 py-3 rounded-full shadow-md hover:shadow-lg transition-shadow border border-emerald-100">
               <Mail className="w-4 h-4 text-emerald-600" />
               <span className="font-semibold text-slate-700">Email Us</span>
             </a>
           </div>
         </div>
       </div>
+
+      <style jsx>{`
+        @keyframes shake {
+          0%, 100% { transform: translateX(0); }
+          25% { transform: translateX(-10px); }
+          75% { transform: translateX(10px); }
+        }
+        
+        @keyframes fadeIn {
+          from { opacity: 0; transform: scale(0.9); }
+          to { opacity: 1; transform: scale(1); }
+        }
+
+        .animate-shake {
+          animation: shake 0.5s ease-in-out;
+        }
+        
+        .animate-fadeIn {
+          animation: fadeIn 0.5s ease-out;
+        }
+      `}</style>
     </div>
   );
 }

@@ -1,12 +1,12 @@
 import React, { useEffect, useRef, useState } from 'react';
 import { Sparkles, Heart, Award, Users, Clock, Shield, Zap, Target } from 'lucide-react';
-
+import { Link } from 'react-router-dom';
 // Import images
-import doctorPortrait from '../assets/dr. Sumaira Gulzar.webp';
-import receptionArea from '../assets/reception-Area.webp';
-import clinicInterior from '../assets/clinicInterior.webp';
+import doctorPortrait from '../assets/dr_sumaira_gulzar.webp';
+import receptionArea from '../assets/reception_area.webp';
+import clinicInterior from '../assets/interior.webp';
 import consultation from '../assets/counsultation.webp';
-import aboutBg from '../assets/about-bg.webp';
+import aboutBg from '../assets/about_bg.webp';
 
 const About = () => {
   const [visibleSections, setVisibleSections] = useState(new Set());
@@ -402,10 +402,11 @@ const About = () => {
             <p className="text-base sm:text-xl text-emerald-50 mb-6 sm:mb-10 max-w-2xl mx-auto leading-relaxed">
               Schedule a consultation today and discover how our advanced laser treatments can help you achieve your aesthetic goals
             </p>
-            <button className="bg-white text-emerald-600 px-6 sm:px-10 py-4 sm:py-5 rounded-full font-bold text-base sm:text-lg hover:bg-emerald-50 transition-all duration-300 shadow-2xl hover:shadow-3xl hover:scale-110 inline-flex items-center gap-2 sm:gap-3 group">
+            <Link 
+    to="/book-appointment" className="bg-white text-emerald-600 px-6 sm:px-10 py-4 sm:py-5 rounded-full font-bold text-base sm:text-lg hover:bg-emerald-50 transition-all duration-300 shadow-2xl hover:shadow-3xl hover:scale-110 inline-flex items-center gap-2 sm:gap-3 group">
               Book Your Consultation
               <Sparkles className="w-4 h-4 sm:w-5 sm:h-5 group-hover:rotate-180 transition-transform duration-500" />
-            </button>
+             </Link>
           </div>
         </div>
       </section>

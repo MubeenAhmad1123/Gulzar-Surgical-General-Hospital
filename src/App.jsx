@@ -9,6 +9,8 @@ import FAQ from "./pages/FAQ";
 import OurTeam from "./pages/Doctors";
 import Gallery from "./pages/Gallery";
 import BookAppointment from "./pages/BookAppointment";
+import Admin from "./pages/AdminDashboard.jsx";
+
 import Footer from "./components/Footer.jsx";
 
 export default function App() {
@@ -25,6 +27,8 @@ export default function App() {
         <Route path="/our-team" element={<OurTeam />} />
         <Route path="/gallery" element={<Gallery />} />
         <Route path="/book-appointment" element={<BookAppointment />} />
+        <Route path="/admin" element={<Admin />} />
+
       </Routes>
       <Footer />
     </Router>

@@ -1,25 +1,28 @@
 import React, { useEffect, useRef, useState } from 'react';
+import { Link } from 'react-router-dom';
 
-// Import images
 import heroImage from '../assets/hero.webp';
-import doctorPortrait from '../assets/doctorPortrait.webp';
-import clinicInterior from '../assets/clinicInterior.webp';
-import laserTreatment from '../assets/laserTreatment.webp';
-import happyClient from '../assets/happyClient.webp';
+import doctorPortrait from '../assets/dr_sumaira_gulzar.webp';
+import clinicInterior from '../assets/interior.webp';
+import laserTreatment from '../assets/lazer.webp';
+import happyClient from '../assets/patient_doctor.webp';
+import FAQ from './FAQ';
 
 const Home = () => {
   const [visibleSections, setVisibleSections] = useState(new Set());
   const [currentSlide, setCurrentSlide] = useState(0);
-  const [animatedStats, setAnimatedStats] = useState({});
+  const [animatedStats, setAnimatedStats] = useState([0, 0, 0, 0]);
+  const [isVisible, setIsVisible] = useState(false);
   const observerRef = useRef(null);
   const statsRef = useRef(null);
+  const heroRef = useRef(null);
   const [hasAnimatedStats, setHasAnimatedStats] = useState(false);
 
   const stats = [
-    { number: 15, suffix: "+", label: "Years Experience" },
-    { number: 24, suffix: "/7", label: "Emergency Care" },
-    { number: 1000, suffix: "+", label: "Happy Clients" },
-    { number: 100, suffix: "%", label: "Safe Procedures" }
+    { value: 15, suffix: "+", label: "Years Experience" },
+    { value: 1000, suffix: "+", label: "Happy Clients" },
+    { value: 50, suffix: "+", label: "Treatments" },
+    { value: 100, suffix: "%", label: "Satisfaction" }
   ];
 
   const services = [
@@ -43,26 +46,67 @@ const Home = () => {
     { src: happyClient, alt: "Happy Client" }
   ];
 
-  // Animate numbers
-  const animateNumber = (target, index) => {
-    const duration = 2000;
-    const steps = 60;
-    const increment = target / steps;
-    let current = 0;
+  // Hero visibility observer
+  useEffect(() => {
+    const observer = new IntersectionObserver(
+      ([entry]) => {
+        if (entry.isIntersecting) {
+          setIsVisible(true);
+        }
+      },
+      { threshold: 0.1 }
+    );
 
-    const timer = setInterval(() => {
-      current += increment;
-      if (current >= target) {
-        current = target;
-        clearInterval(timer);
+    if (heroRef.current) {
+      observer.observe(heroRef.current);
+    }
+
+    return () => {
+      if (heroRef.current) {
+        observer.unobserve(heroRef.current);
       }
-      setAnimatedStats(prev => ({
-        ...prev,
-        [index]: Math.floor(current)
-      }));
-    }, duration / steps);
-  };
+    };
+  }, []);
 
+  // Stats counter animation
+  useEffect(() => {
+    const observer = new IntersectionObserver(
+      ([entry]) => {
+        if (entry.isIntersecting && !hasAnimatedStats) {
+          setHasAnimatedStats(true);
+          stats.forEach((stat, index) => {
+            let current = 0;
+            const increment = stat.value / 50;
+            const timer = setInterval(() => {
+              current += increment;
+              if (current >= stat.value) {
+                current = stat.value;
+                clearInterval(timer);
+              }
+              setAnimatedStats(prev => {
+                const newStats = [...prev];
+                newStats[index] = Math.floor(current);
+                return newStats;
+              });
+            }, 30);
+          });
+        }
+      },
+      { threshold: 0.5 }
+    );
+
+    if (statsRef.current) {
+      observer.observe(statsRef.current);
+    }
+
+    return () => {
+      if (statsRef.current) {
+        observer.unobserve(statsRef.current);
+      }
+    };
+  }, [hasAnimatedStats]);
+
+  // Other sections observer
   useEffect(() => {
     observerRef.current = new IntersectionObserver(
       (entries) => {
@@ -70,14 +114,6 @@ const Home = () => {
           if (entry.isIntersecting) {
             const section = entry.target.dataset.section;
             setVisibleSections((prev) => new Set([...prev, section]));
-            
-            // Trigger stats animation
-            if (section === 'hero' && !hasAnimatedStats) {
-              setHasAnimatedStats(true);
-              stats.forEach((stat, index) => {
-                setTimeout(() => animateNumber(stat.number, index), index * 100);
-              });
-            }
           }
         });
       },
@@ -95,68 +131,77 @@ const Home = () => {
       if (observerRef.current) observerRef.current.disconnect();
       clearInterval(interval);
     };
-  }, [hasAnimatedStats]);
+  }, []);
 
   return (
-    <div className="bg-gradient-to-b from-green-50 via-emerald-50/30 to-white">
+    <div className="bg-gradient-to-b from-white via-emerald-50/30 to-white">
       {/* Hero Section */}
       <section 
+        ref={heroRef}
         data-section="hero"
-        className="animate-section relative min-h-screen flex items-center overflow-hidden"
+        className="relative min-h-screen flex items-center bg-gradient-to-b from-white via-emerald-50/30 to-white overflow-hidden"
       >
-        {/* Background Pattern */}
-        <div className="absolute inset-0 opacity-5">
-          <div className="absolute inset-0" style={{
-            backgroundImage: 'radial-gradient(circle at 2px 2px, rgb(16 185 129) 1px, transparent 0)',
-            backgroundSize: '40px 40px'
-          }}></div>
+        {/* Subtle Background Pattern */}
+        <div className="absolute inset-0 opacity-[0.03]">
+          <div 
+            className="absolute inset-0" 
+            style={{
+              backgroundImage: 'radial-gradient(circle at 2px 2px, rgb(16 185 129) 1px, transparent 0)',
+              backgroundSize: '50px 50px'
+            }}
+          />
         </div>
 
-        {/* Floating Elements */}
-        <div className="absolute top-20 left-10 w-20 h-20 bg-emerald-200/30 rounded-full blur-2xl animate-pulse"></div>
-        <div className="absolute bottom-40 right-20 w-32 h-32 bg-green-300/20 rounded-full blur-3xl animate-pulse" style={{ animationDelay: '1s' }}></div>
-        <div className="absolute top-1/2 right-1/4 w-16 h-16 bg-amber-200/30 rounded-full blur-xl animate-pulse" style={{ animationDelay: '2s' }}></div>
-
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-20 relative z-10">
-          <div className="grid lg:grid-cols-2 gap-12 items-center">
+          <div className="grid lg:grid-cols-2 gap-16 items-center">
             {/* Left Content */}
-            <div className="space-y-8">
-              <div className="inline-block bg-emerald-100/80 backdrop-blur-sm text-emerald-800 px-4 py-2 rounded-full text-sm font-semibold border border-emerald-200/50 animate-fade-in">
+            <div 
+              className={`space-y-6 transition-all duration-1000 ${
+                isVisible ? 'opacity-100 translate-y-0' : 'opacity-0 translate-y-10'
+              }`}
+            >
+              <div className="inline-flex items-center gap-2 bg-emerald-50 text-emerald-700 px-5 py-2.5 rounded-full text-sm font-medium border border-emerald-100">
+                <span className="w-2 h-2 bg-emerald-500 rounded-full animate-pulse" />
                 Gulzar Laser & Aesthetics Centre
               </div>
               
-              <h1 className="text-5xl md:text-6xl lg:text-7xl font-bold text-gray-900 leading-tight animate-slide-up">
+              <h1 className="text-5xl md:text-6xl font-bold text-gray-900 leading-tight">
                 Your Journey to
-                <span className="block text-transparent bg-clip-text bg-gradient-to-r from-emerald-600 via-green-600 to-emerald-700 mt-2 animate-gradient bg-[length:200%_auto]">
+                <span className="block text-emerald-600 mt-2">
                   Radiant Skin
                 </span>
               </h1>
               
-              <p className="text-xl text-gray-700 leading-relaxed max-w-xl animate-fade-in" style={{ animationDelay: '0.2s' }}>
+              <p className="text-lg text-gray-600 leading-relaxed max-w-xl">
                 Where advanced laser technology meets personalized care to help you achieve the confident, glowing skin you deserve
               </p>
 
-              <div className="flex flex-wrap gap-4 animate-fade-in" style={{ animationDelay: '0.4s' }}>
-                <button className="bg-gradient-to-r from-emerald-600 to-green-600 hover:from-emerald-700 hover:to-green-700 text-white px-8 py-4 rounded-full font-semibold text-lg shadow-lg hover:shadow-xl transition-all duration-300 hover:scale-105">
-                  Book Your Consultation
-                </button>
-                <button className="bg-white hover:bg-amber-50 text-emerald-700 px-8 py-4 rounded-full font-semibold text-lg shadow-lg hover:shadow-xl transition-all duration-300 border-2 border-emerald-600 hover:scale-105">
-                  View Services
-                </button>
-              </div>
+<div className="flex flex-wrap gap-4 pt-4">
+  <Link 
+    to="/book-appointment"
+    className="bg-emerald-600 hover:bg-emerald-700 text-white px-8 py-3.5 rounded-full font-medium text-base shadow-lg hover:shadow-xl transition-all duration-300 inline-block text-center"
+  >
+    Book Your Consultation
+  </Link>
+  <Link 
+    to="/services"
+    className="bg-white hover:bg-gray-50 text-emerald-700 px-8 py-3.5 rounded-full font-medium text-base shadow-md hover:shadow-lg transition-all duration-300 border border-gray-200 inline-block text-center"
+  >
+    View Services
+  </Link>
+</div>
 
-              {/* Stats with Number Animation */}
-              <div ref={statsRef} className="grid grid-cols-2 md:grid-cols-4 gap-6 pt-8">
+              {/* Stats */}
+              <div 
+                ref={statsRef}
+                className="grid grid-cols-2 md:grid-cols-4 gap-8 pt-8 border-t border-gray-200"
+              >
                 {stats.map((stat, index) => (
-                  <div 
-                    key={index} 
-                    className="text-center transform hover:scale-110 transition-all duration-300 animate-fade-in"
-                    style={{ animationDelay: `${0.6 + index * 0.1}s` }}
-                  >
-                    <div className="text-3xl md:text-4xl font-bold text-emerald-700 mb-1">
+                  <div key={index} className="text-center">
+                    <div className="text-3xl md:text-4xl font-bold text-emerald-600 mb-1">
                       {animatedStats[index] || 0}{stat.suffix}
                     </div>
-                    <div className="text-sm text-gray-600 font-medium">
+                    <div className="text-sm text-gray-600">
                       {stat.label}
                     </div>
                   </div>
@@ -165,18 +210,42 @@ const Home = () => {
             </div>
 
             {/* Right Content - Hero Image */}
-            <div className="relative animate-fade-in" style={{ animationDelay: '0.3s' }}>
-              <div className="relative z-10 animate-float">
-                <div className="aspect-square bg-gradient-to-br from-emerald-100 via-green-50 to-amber-50 rounded-3xl shadow-2xl overflow-hidden border-4 border-white hover:scale-105 transition-transform duration-500">
-                  <img src={heroImage} alt="Gulzar Aesthetics" className="w-full h-full object-cover" />
+            <div 
+              className={`relative transition-all duration-1000 delay-300 ${
+                isVisible ? 'opacity-100 translate-x-0' : 'opacity-0 translate-x-10'
+              }`}
+            >
+              <div className="relative">
+                <div className="aspect-[4/5] bg-gradient-to-br from-emerald-100 to-emerald-50 rounded-3xl shadow-2xl overflow-hidden">
+                  <img 
+                    src={heroImage} 
+                    alt="Gulzar Aesthetics" 
+                    className="w-full h-full object-cover"
+                  />
+                </div>
+                
+                {/* Floating Card */}
+                <div className="absolute -bottom-6 -left-6 bg-white p-6 rounded-2xl shadow-xl border border-gray-100">
+                  <div className="flex items-center gap-4">
+                    <div className="w-12 h-12 bg-emerald-100 rounded-full flex items-center justify-center">
+                      <svg className="w-6 h-6 text-emerald-600" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                        <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M5 13l4 4L19 7" />
+                      </svg>
+                    </div>
+                    <div>
+                      <div className="font-semibold text-gray-900">Certified</div>
+                      <div className="text-sm text-gray-600">Expert Care</div>
+                    </div>
+                  </div>
                 </div>
               </div>
-              {/* Decorative Elements */}
-              <div className="absolute -top-6 -left-6 w-24 h-24 bg-emerald-200/50 rounded-full blur-2xl animate-pulse"></div>
-              <div className="absolute -bottom-6 -right-6 w-32 h-32 bg-amber-200/50 rounded-full blur-2xl animate-pulse" style={{ animationDelay: '1s' }}></div>
             </div>
           </div>
         </div>
+
+        {/* Decorative Elements */}
+        <div className="absolute top-1/4 left-10 w-32 h-32 bg-emerald-200/20 rounded-full blur-3xl" />
+        <div className="absolute bottom-1/4 right-10 w-40 h-40 bg-amber-200/20 rounded-full blur-3xl" />
       </section>
 
       {/* Our Story Section */}
@@ -209,7 +278,7 @@ const Home = () => {
               {/* Doctor Card */}
               <div className="bg-gradient-to-br from-emerald-50 to-green-50 rounded-2xl p-6 border border-emerald-100 shadow-lg mt-8 hover:shadow-xl hover:scale-105 transition-all duration-300">
                 <div className="flex items-center gap-4 mb-3">
-                  <div className="w-16 h-16 bg-emerald-200 rounded-full flex items-center justify-center text-3xl animate-pulse">
+                  <div className="w-16 h-16 bg-emerald-200 rounded-full flex items-center justify-center text-3xl">
                     👩‍⚕️
                   </div>
                   <div>
@@ -339,9 +408,10 @@ const Home = () => {
                   {service.title}
                 </h3>
                 <p className="text-gray-600 text-sm mb-4">{service.description}</p>
-                <button className="text-emerald-700 font-semibold text-sm group-hover:underline group-hover:translate-x-2 transition-transform duration-300 inline-block">
+                 <Link 
+    to="/services" className="text-emerald-700 font-semibold text-sm group-hover:underline group-hover:translate-x-2 transition-transform duration-300 inline-block">
                   Learn More →
-                </button>
+                 </Link>
               </div>
             ))}
           </div>
@@ -365,7 +435,7 @@ const Home = () => {
           </div>
 
           <div className="relative bg-white rounded-3xl shadow-2xl p-12 border border-emerald-100 hover:shadow-3xl transition-shadow duration-500">
-            <div className="text-6xl text-emerald-200 mb-4 animate-pulse">"</div>
+            <div className="text-6xl text-emerald-200 mb-4">"</div>
             <p className="text-xl text-gray-800 mb-6 leading-relaxed">
               {testimonials[currentSlide].text}
             </p>
@@ -374,7 +444,7 @@ const Home = () => {
                 <p className="font-bold text-gray-900">{testimonials[currentSlide].name}</p>
                 <div className="flex gap-1 mt-2">
                   {[...Array(testimonials[currentSlide].rating)].map((_, i) => (
-                    <span key={i} className="text-amber-400 animate-pulse" style={{ animationDelay: `${i * 100}ms` }}>⭐</span>
+                    <span key={i} className="text-amber-400">⭐</span>
                   ))}
                 </div>
               </div>
@@ -393,7 +463,7 @@ const Home = () => {
           </div>
         </div>
       </section>
-
+<FAQ/>
       {/* CTA Section */}
       <section 
         data-section="cta"
@@ -402,60 +472,25 @@ const Home = () => {
         }`}
       >
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-          <div className="bg-gradient-to-r from-emerald-600 via-green-600 to-emerald-700 rounded-3xl shadow-2xl p-12 text-center text-white relative overflow-hidden hover:scale-105 transition-transform duration-500 bg-[length:200%_auto] animate-gradient">
+          <div className="bg-gradient-to-r from-emerald-600 via-green-600 to-emerald-700 rounded-3xl shadow-2xl p-12 text-center text-white relative overflow-hidden hover:scale-105 transition-transform duration-500">
             <div className="absolute inset-0 bg-[radial-gradient(circle_at_30%_50%,rgba(255,255,255,0.1),transparent_50%)]"></div>
             <div className="relative z-10">
-              <h2 className="text-3xl md:text-4xl font-bold mb-4 animate-fade-in">
+              <h2 className="text-3xl md:text-4xl font-bold mb-4">
                 Ready to Transform Your Skin?
               </h2>
-              <p className="text-xl text-emerald-50 mb-8 max-w-2xl mx-auto animate-fade-in" style={{ animationDelay: '0.2s' }}>
+              <p className="text-xl text-emerald-50 mb-8 max-w-2xl mx-auto">
                 Schedule a consultation today and discover how our advanced laser treatments can help you achieve your aesthetic goals
               </p>
-              <button className="bg-white text-emerald-700 hover:bg-amber-50 px-10 py-4 rounded-full font-bold text-lg transition-all duration-300 hover:scale-110 shadow-xl hover:shadow-2xl animate-fade-in" style={{ animationDelay: '0.4s' }}>
-                Book Your Consultation
-              </button>
+ <Link 
+    to="/book-appointment"
+    className="bg-emerald-600 hover:bg-emerald-700 text-white px-8 py-3.5 rounded-full font-medium text-base shadow-lg hover:shadow-xl transition-all duration-300 inline-block text-center"
+  >
+    Book Your Consultation
+  </Link>
             </div>
           </div>
         </div>
       </section>
-
-      <style jsx>{`
-        @keyframes gradient {
-          0%, 100% { background-position: 0% 50%; }
-          50% { background-position: 100% 50%; }
-        }
-        .animate-gradient {
-          animation: gradient 8s ease infinite;
-        }
-        @keyframes slide-up {
-          from {
-            opacity: 0;
-            transform: translateY(30px);
-          }
-          to {
-            opacity: 1;
-            transform: translateY(0);
-          }
-        }
-        .animate-slide-up {
-          animation: slide-up 0.8s ease-out;
-        }
-        @keyframes fade-in {
-          from { opacity: 0; }
-          to { opacity: 1; }
-        }
-        .animate-fade-in {
-          animation: fade-in 1s ease-out forwards;
-          opacity: 0;
-        }
-        @keyframes float {
-          0%, 100% { transform: translateY(0px); }
-          50% { transform: translateY(-20px); }
-        }
-        .animate-float {
-          animation: float 6s ease-in-out infinite;
-        }
-      `}</style>
     </div>
   );
 };

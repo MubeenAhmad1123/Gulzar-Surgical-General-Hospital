@@ -1,14 +1,15 @@
 import React, { useState, useEffect, useRef } from 'react';
 import { Award, Heart, Users, Clock, Sparkles, GraduationCap, Star, CheckCircle, Linkedin } from 'lucide-react';
+import { Link } from 'react-router-dom';
 
 // Import images
-import drSumairaImage from '../assets/dr. Sumaira Gulzar.webp';
-import drSarahImage from '../assets/Dr. Sarah Ahmed.webp';
-import drAyeshaImage from '../assets/Dr. Ayesha Khan.webp';
-import drFatimaImage from '../assets/Dr. Fatima Ali.webp';
-import zaraImage from '../assets/Zara Hussain.webp';
-import expertTeamImage from '../assets/Expert_Team.webp';
-import qualityAssuredImage from '../assets/Quality_Assured.webp';
+import drSumairaImage from '../assets/dr_sumaira_gulzar.webp';
+import drSarahImage from '../assets/dr_sarah_ahmed.webp';
+import drAyeshaImage from '../assets/dr_ayesha_khan.webp';
+import drFatimaImage from '../assets/dr_fatima_ali.webp';
+import zaraImage from '../assets/zara_hussain.webp';
+import expertTeamImage from '../assets/expert_team.webp';
+import qualityAssuredImage from '../assets/quality_assured.webp';
 
 const DoctorsTeam = () => {
   const [visibleSections, setVisibleSections] = useState(new Set());
@@ -380,10 +381,11 @@ const DoctorsTeam = () => {
               <p className="text-lg sm:text-xl text-emerald-50 mb-8 max-w-2xl mx-auto px-4">
                 Book a consultation with our expert team and discover personalized treatment plans designed just for you
               </p>
-              <button className="bg-white text-emerald-600 px-6 sm:px-8 py-3 sm:py-4 rounded-full font-semibold text-base sm:text-lg hover:bg-emerald-50 transition-all duration-300 shadow-lg hover:shadow-xl inline-flex items-center gap-2 hover:scale-105 transform">
+              <Link 
+    to="/book-appointment" className="bg-white text-emerald-600 px-6 sm:px-8 py-3 sm:py-4 rounded-full font-semibold text-base sm:text-lg hover:bg-emerald-50 transition-all duration-300 shadow-lg hover:shadow-xl inline-flex items-center gap-2 hover:scale-105 transform">
                 <CheckCircle className="w-5 h-5 sm:w-6 sm:h-6" />
                 Schedule Consultation
-              </button>
+               </Link>
             </div>
           </div>
         </div>
