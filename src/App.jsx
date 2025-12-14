@@ -1,5 +1,6 @@
 import { ScrollToTop } from './ScrollToTop';
 import { BrowserRouter as Router, Routes, Route } from "react-router-dom";
+import { Analytics } from '@vercel/analytics/react';
 import Navbar from "./components/Navbar.jsx";
 import Home from "./pages/Home";
 import About from "./pages/About";
@@ -31,6 +32,7 @@ export default function App() {
 
       </Routes>
       <Footer />
+      <Analytics />
     </Router>
   );
 }

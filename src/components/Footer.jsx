@@ -2,6 +2,7 @@ import React, { useState } from 'react';
 import { Facebook, Instagram, Linkedin, Youtube, MapPin, Mail, Phone, Clock, Send, Heart, Sparkles, } from 'lucide-react';
 import emailjs from '@emailjs/browser';
 
+
 import Call from '../assets/call.webp';
 import Whatsapp from '../assets/whatsapp3.webp';
 const Footer = () => {
