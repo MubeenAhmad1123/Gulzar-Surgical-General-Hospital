@@ -21,7 +21,6 @@ import dentalServices from '../assets/dental_services.webp';
 import qualityAssured from '../assets/quality_assured.webp';
 import expertTeam from '../assets/expert_team.webp';
 import servicesBg from '../assets/services_section_bg.webp';
-// skinGlow, lesionRemoval, dentalServices, qualityAssured, expertTeam
 
 const Services = () => {
   const [visibleCards, setVisibleCards] = useState(new Set());
